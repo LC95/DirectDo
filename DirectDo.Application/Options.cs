@@ -11,7 +11,7 @@ namespace DirectDo.Application
             SetName = "Timing")]
         public string At { get; set; }
 
-        [Option('>', "after", Required = true, HelpText = "Alert after a period",
+        [Option('>', "after", Required = false, HelpText = "Alert after a period",
             SetName = "PeriodTiming")]
         public string After { get; set; }
 
