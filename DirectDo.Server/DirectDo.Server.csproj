@@ -16,10 +16,4 @@
       <ProjectReference Include="..\DirectDo.Application\DirectDo.Application.csproj" />
       <ProjectReference Include="..\DirectDo.Domain\DirectDo.Domain.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <None Update="Images\clock.jpeg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
 </Project>

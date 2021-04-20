@@ -5,7 +5,7 @@ using DirectDo.Domain.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace DirectDo.Service.Workers
+namespace DirectDo.Server.Workers
 {
     public class AlertWorker : BackgroundService
     {

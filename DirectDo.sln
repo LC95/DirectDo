@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectDo.Domain", "DirectDo.Domain\DirectDo.Domain.csproj", "{53D13D4F-799C-4E87-9CB3-1D42721790B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectDo.Service", "DirectDo.Service\DirectDo.Service.csproj", "{08DC2A3E-674D-44DB-835E-C332CE0459DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectDo.Server", "DirectDo.Server\DirectDo.Server.csproj", "{08DC2A3E-674D-44DB-835E-C332CE0459DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectDo.Application", "DirectDo.Application\DirectDo.Application.csproj", "{829183BA-F81B-4214-8C06-94613898E896}"
 EndProject

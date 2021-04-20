@@ -15,7 +15,7 @@ using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
 
-namespace DirectDo.Service.Workers
+namespace DirectDo.Server.Workers
 {
     public class CommandReceiverWorker : BackgroundService
     {
