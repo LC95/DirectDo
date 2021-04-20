@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace DirectDo.Application.Utils
+namespace DirectDo.Application
 {
     public interface INotify
     {

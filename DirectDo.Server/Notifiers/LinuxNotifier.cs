@@ -1,7 +1,8 @@
+using DirectDo.Application;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace DirectDo.Application.Utils
+namespace DirectDo.Server
 {
     public class LinuxNotifier : INotify
     {

@@ -95,5 +95,22 @@ namespace DirectDo.Server.Workers
 
             throw new ArgumentException("参数无法转换");
         }
+
+        public override void Dispose()
+        {
+            try
+            {
+                _publisher.Dispose();
+                _pullSocket.Dispose();
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.ToString());
+            }
+            finally
+            {
+                base.Dispose();
+            }
+        }
     }
 }

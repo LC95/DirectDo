@@ -26,7 +26,6 @@ namespace DirectDo.Client
             var subscribeJob = Task.Run(DoOnSubscriberListen);
 
             _pushSocket.SendFrame(JsonConvert.SerializeObject(args));
-            Console.WriteLine("按任意键退出！");
             Console.ReadKey();
         }
 
@@ -37,6 +36,7 @@ namespace DirectDo.Client
                 var title = _subscriberSocket.ReceiveFrameString();
                 var message = _subscriberSocket.ReceiveFrameString();
                 Console.WriteLine($"{title}:{message}");
+                Console.WriteLine("按任意键退出！");
             }
         }
 

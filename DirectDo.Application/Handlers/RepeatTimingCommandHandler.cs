@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DirectDo.Application.Utils;
 using DirectDo.Domain.Commands;
 using MediatR;
 

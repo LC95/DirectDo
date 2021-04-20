@@ -2,12 +2,12 @@ using System;
 using System.Reflection;
 using System.Threading;
 using DirectDo.Application;
-using DirectDo.Application.Utils;
 using DirectDo.Domain.Models;
 using DirectDo.Server.Workers;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using DirectDo.Server.Notifiers;
 
 namespace DirectDo.Server
 {
@@ -48,8 +48,12 @@ namespace DirectDo.Server
                             Assembly.GetAssembly(typeof(AlertService)),
                             Assembly.GetAssembly(typeof(INotify)))
                         .AddSingleton<IAlertService, AlertService>()
-                        .AddSingleton<INotify, LinuxNotifier>()
                         .BuildServiceProvider();
+#if WINDOWS10_0_19041_0
+                    services.AddSingleton<INotify, WindowsNotifier>();
+#else
+                    services.AddSingleton<INotify, LinuxNotifier>();
+#endif
                 });
         }
     }
