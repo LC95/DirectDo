@@ -1,12 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectDo.Domain", "DirectDo.Domain\DirectDo.Domain.csproj", "{53D13D4F-799C-4E87-9CB3-1D42721790B6}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DirectDo.Domain", "DirectDo.Domain\DirectDo.Domain.csproj", "{53D13D4F-799C-4E87-9CB3-1D42721790B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectDo.Server", "DirectDo.Server\DirectDo.Server.csproj", "{08DC2A3E-674D-44DB-835E-C332CE0459DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DirectDo.Server", "DirectDo.Server\DirectDo.Server.csproj", "{08DC2A3E-674D-44DB-835E-C332CE0459DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectDo.Application", "DirectDo.Application\DirectDo.Application.csproj", "{829183BA-F81B-4214-8C06-94613898E896}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DirectDo.Application", "DirectDo.Application\DirectDo.Application.csproj", "{829183BA-F81B-4214-8C06-94613898E896}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectDo.Client", "DirectDo.Client\DirectDo.Client.csproj", "{3400E7D2-84F9-44FC-BAC6-F1EAF046CFCC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DirectDo.Client", "DirectDo.Client\DirectDo.Client.csproj", "{3400E7D2-84F9-44FC-BAC6-F1EAF046CFCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +33,11 @@ Global
 		{3400E7D2-84F9-44FC-BAC6-F1EAF046CFCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3400E7D2-84F9-44FC-BAC6-F1EAF046CFCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3400E7D2-84F9-44FC-BAC6-F1EAF046CFCC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FE6092B3-8A7C-4FC7-80A6-C82A4891BA90}
 	EndGlobalSection
 EndGlobal

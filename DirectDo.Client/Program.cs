@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using NetMQ;
+﻿using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 
 namespace DirectDo.Client
 {

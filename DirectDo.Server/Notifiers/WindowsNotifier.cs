@@ -4,10 +4,7 @@
 using Microsoft.Toolkit.Uwp.Notifications;
 # endif
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DirectDo.Server.Notifiers

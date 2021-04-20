@@ -1,5 +1,5 @@
-using System;
 using DirectDo.Domain.Models;
+using System;
 
 namespace DirectDo.Domain.Commands
 {

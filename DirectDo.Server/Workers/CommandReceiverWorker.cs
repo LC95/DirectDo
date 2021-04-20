@@ -1,8 +1,14 @@
+
+/* 项目“DirectDo.Server (net5.0-windows10.0.19041.0)”的未合并的更改
+在此之前:
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommandLine;
+在此之后:
+using CommandLine;
+*/
 using DirectDo.Application;
 using DirectDo.Domain;
 using DirectDo.Domain.Commands;
@@ -13,7 +19,21 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NetMQ;
 using NetMQ.Sockets;
+
+/* 项目“DirectDo.Server (net5.0-windows10.0.19041.0)”的未合并的更改
+在此之前:
 using Newtonsoft.Json;
+在此之后:
+using Newtonsoft.Json;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+*/
+using Newtonsoft.Json;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DirectDo.Server.Workers
 {
@@ -45,23 +65,67 @@ namespace DirectDo.Server.Workers
                 _publisher.SendMoreFrame("Received").SendFrame($"Your command received:{paramMsg}");
                 _logger.LogInformation("From Pusher : {0}", paramMsg);
 
-                var cmd = BuildCommand(paramMsg);
-                if (cmd != null) await _mediator.Publish(cmd);
+                try
+                {
+                    var cmd = BuildCommand(paramMsg);
+                    if (cmd != null) await _mediator.Publish(cmd);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.ToString());
+                    _publisher.SendMoreFrame("Error").SendFrame(e.ToString());
+                }
+
             }
         }
 
         private IControlCommand BuildCommand(string param)
         {
             var args = JsonConvert.DeserializeObject<string[]>(param);
-            var options = Parser.Default.ParseArguments<Options>(args);
-            IControlCommand command = null;
-            options.WithParsed(o => { command = BuildCommand(o); })
-                .WithNotParsed(e =>
-                    {
-                        _publisher.SendMoreFrame("Error").SendFrame($"Your command error:{e.First().Tag}");
-                    }
-                );
+            var options = OptionsParse(args);
+
+            IControlCommand command = BuildCommand(options);
             return command;
+        }
+
+        private Options OptionsParse(string[] args)
+        {
+            var option = new Options();
+            foreach (var arg in args)
+            {
+                if (arg.StartsWith('@'))
+                {
+                    option.At = arg.Substring(1);
+                }
+
+                if (arg.StartsWith('>'))
+                {
+                    option.After = arg.Substring(1);
+                }
+
+                if (arg.StartsWith('!'))
+                {
+                    if (arg.Length == 1)
+                    {
+                        option.AlarmNumber = null;
+                    }
+                    else
+                    {
+                        option.AlarmNumber = int.Parse(arg.Substring(1));
+                    }
+                }
+
+                if (arg.StartsWith('<'))
+                {
+                    option.MaintainTimes = int.Parse(arg.Substring(1));
+                }
+
+                if (arg.StartsWith('&'))
+                {
+                    option.Message = arg.Substring(1);
+                }
+            }
+            return option;
         }
 
         private IControlCommand BuildCommand(Options options)
@@ -103,7 +167,7 @@ namespace DirectDo.Server.Workers
                 _publisher.Dispose();
                 _pullSocket.Dispose();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
             }

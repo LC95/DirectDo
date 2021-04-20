@@ -1,8 +1,8 @@
+using DirectDo.Domain.Commands;
+using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DirectDo.Domain.Commands;
-using MediatR;
 
 namespace DirectDo.Application.Handlers
 {
