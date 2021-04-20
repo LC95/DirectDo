@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectDo.Domain", "DirectDo.Domain\DirectDo.Domain.csproj", "{53D13D4F-799C-4E87-9CB3-1D42721790B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectDo.Service", "DirectDo.Service\DirectDo.Service.csproj", "{08DC2A3E-674D-44DB-835E-C332CE0459DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectDo.Application", "DirectDo.Application\DirectDo.Application.csproj", "{829183BA-F81B-4214-8C06-94613898E896}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectDo.Client", "DirectDo.Client\DirectDo.Client.csproj", "{3400E7D2-84F9-44FC-BAC6-F1EAF046CFCC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{53D13D4F-799C-4E87-9CB3-1D42721790B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53D13D4F-799C-4E87-9CB3-1D42721790B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53D13D4F-799C-4E87-9CB3-1D42721790B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53D13D4F-799C-4E87-9CB3-1D42721790B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08DC2A3E-674D-44DB-835E-C332CE0459DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08DC2A3E-674D-44DB-835E-C332CE0459DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08DC2A3E-674D-44DB-835E-C332CE0459DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08DC2A3E-674D-44DB-835E-C332CE0459DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{829183BA-F81B-4214-8C06-94613898E896}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{829183BA-F81B-4214-8C06-94613898E896}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{829183BA-F81B-4214-8C06-94613898E896}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{829183BA-F81B-4214-8C06-94613898E896}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3400E7D2-84F9-44FC-BAC6-F1EAF046CFCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3400E7D2-84F9-44FC-BAC6-F1EAF046CFCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3400E7D2-84F9-44FC-BAC6-F1EAF046CFCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3400E7D2-84F9-44FC-BAC6-F1EAF046CFCC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
