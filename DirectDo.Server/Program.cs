@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace DirectDo.Server
@@ -47,13 +48,18 @@ namespace DirectDo.Server
                         .AddMediatR(
                             Assembly.GetAssembly(typeof(AlertService)),
                             Assembly.GetAssembly(typeof(INotify)))
-                        .AddSingleton<IAlertService, AlertService>()
-                        .BuildServiceProvider();
-#if WINDOWS10_0_19041_0
-                    services.AddSingleton<INotify, WindowsNotifier>();
-#else
-                    services.AddSingleton<INotify, LinuxNotifier>();
-#endif
+                        .AddSingleton<IAlertService, AlertService>();
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    {
+                        services.AddSingleton<INotify, LinuxNotifier>();
+                    }
+                    else
+                    {
+                        services.AddSingleton<INotify, WindowsNotifier>();
+
+                    }
+
+                    services.BuildServiceProvider();
                 });
         }
     }

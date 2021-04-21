@@ -61,13 +61,14 @@ namespace DirectDo.Server.Workers
             _logger.LogInformation("Command Receiver Worker Started!");
             while (true)
             {
-                var paramMsg = _pullSocket.ReceiveFrameString();
-                _publisher.SendMoreFrame("Received").SendFrame($"Your command received:{paramMsg}");
+                var (paramMsg, _) = await _pullSocket.ReceiveFrameStringAsync();
                 _logger.LogInformation("From Pusher : {0}", paramMsg);
 
                 try
                 {
                     var cmd = BuildCommand(paramMsg);
+                    _publisher.SendMoreFrame("Received").SendFrame($"Your command Id {cmd.Id} received :{paramMsg}");
+
                     if (cmd != null) await _mediator.Publish(cmd);
                 }
                 catch (Exception e)
@@ -82,82 +83,9 @@ namespace DirectDo.Server.Workers
         private IControlCommand BuildCommand(string param)
         {
             var args = JsonConvert.DeserializeObject<string[]>(param);
-            var options = OptionsParse(args);
 
-            IControlCommand command = BuildCommand(options);
+            IControlCommand command = Utils.BuildCommand(args);
             return command;
-        }
-
-        private Options OptionsParse(string[] args)
-        {
-            var option = new Options();
-            foreach (var arg in args)
-            {
-                if (arg.StartsWith('@'))
-                {
-                    option.At = arg.Substring(1);
-                }
-
-                if (arg.StartsWith('>'))
-                {
-                    option.After = arg.Substring(1);
-                }
-
-                if (arg.StartsWith('!'))
-                {
-                    if (arg.Length == 1)
-                    {
-                        option.AlarmNumber = null;
-                    }
-                    else
-                    {
-                        option.AlarmNumber = int.Parse(arg.Substring(1));
-                    }
-                }
-
-                if (arg.StartsWith('<'))
-                {
-                    option.MaintainTimes = int.Parse(arg.Substring(1));
-                }
-
-                if (arg.StartsWith('&'))
-                {
-                    option.Message = arg.Substring(1);
-                }
-            }
-            return option;
-        }
-
-        private IControlCommand BuildCommand(Options options)
-        {
-            DateTime? at = null;
-            TimeSpan? after = null;
-            var isAlarm = options.AlarmNumber != null;
-            var maintainTimes = options.MaintainTimes;
-
-            if (!string.IsNullOrEmpty(options.At)) at = DateTime.Parse(options.At);
-
-            if (!string.IsNullOrEmpty(options.After)) after = Utils.ParsePeriod(options.After);
-
-            if (at != null)
-            {
-                var cmd = new AtTimingCommand(at.Value, isAlarm, options.Message);
-                return new TimingCreatedNotification(cmd);
-            }
-
-            if (after != null)
-            {
-                var next = DateTime.Now.Add(after.Value);
-                var cmd = new PeriodTimingAlertCommand(next, new Times(maintainTimes), after.Value, isAlarm,
-                    options.Message);
-                return new TimingCreatedNotification(cmd);
-            }
-
-            if (string.IsNullOrEmpty(options.Search))
-                return new SearchCommand(options.Search);
-            if (string.IsNullOrWhiteSpace(options.Delete)) return new DeleteCommand(options.Delete);
-
-            throw new ArgumentException("参数无法转换");
         }
 
         public override void Dispose()

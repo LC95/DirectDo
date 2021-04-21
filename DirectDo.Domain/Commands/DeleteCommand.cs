@@ -1,3 +1,4 @@
+using System;
 using DirectDo.Domain.Models;
 
 namespace DirectDo.Domain.Commands
@@ -6,9 +7,11 @@ namespace DirectDo.Domain.Commands
     {
         public DeleteCommand(string id)
         {
-            Id = id;
+            TimingId = id;
         }
 
-        public string Id { get; }
+        public string TimingId { get; }
+
+        public Guid Id => Guid.NewGuid();
     }
 }

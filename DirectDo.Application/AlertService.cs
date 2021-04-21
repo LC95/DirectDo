@@ -54,5 +54,10 @@ namespace DirectDo.Application
                 await Task.Delay(INTERVAL_TIME_SPAN, stoppingToken);
             }
         }
+
+        public IEnumerable<TimingCommand> Search()
+        {
+            return _waitList;
+        }
     }
 }

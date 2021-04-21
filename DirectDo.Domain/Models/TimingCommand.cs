@@ -5,6 +5,7 @@ namespace DirectDo.Domain.Models
 {
     public interface IControlCommand : INotification
     {
+        public Guid Id { get; }
     }
 
     public abstract class TimingCommand : IControlCommand
@@ -17,12 +18,13 @@ namespace DirectDo.Domain.Models
 
         protected TimingCommand(DateTime alertTime, bool isAlarm, string message)
         {
+            Id = Guid.NewGuid();
             AlertTime = alertTime;
             IsAlarm = isAlarm;
             Message = message;
         }
 
-        public Guid Id { get; } = Guid.NewGuid();
+        public Guid Id { get; };
         public abstract bool IsComplete { get; }
 
         public abstract void AfterRun();

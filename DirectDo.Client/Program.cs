@@ -29,13 +29,18 @@ namespace DirectDo.Client
             Console.ReadKey();
         }
 
-        private Task DoOnSubscriberListen()
+        private async Task DoOnSubscriberListen()
         {
             while (true)
             {
-                var title = _subscriberSocket.ReceiveFrameString();
-                var message = _subscriberSocket.ReceiveFrameString();
-                Console.WriteLine($"{title}:{message}");
+                string msg = "";
+                var (title, isMore) = await _subscriberSocket.ReceiveFrameStringAsync();
+                if (isMore)
+                {
+                    msg = _subscriberSocket.ReceiveFrameString();
+                }
+
+                Console.WriteLine($"{title}:{msg}");
                 Console.WriteLine("按任意键退出！");
             }
         }
