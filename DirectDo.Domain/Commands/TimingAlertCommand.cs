@@ -27,7 +27,7 @@ namespace DirectDo.Domain.Commands
     /// <summary>
     ///     重复指令
     /// </summary>
-    public class PeriodTimingAlertCommand : TimingCommand
+    public class TimingAlertCommand : TimingCommand
     {
         /// <summary>
         ///     间隔时间
@@ -42,14 +42,16 @@ namespace DirectDo.Domain.Commands
         /// <summary>
         ///     初始化
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="alertTime">计时</param>
         /// <param name="remainTimes">剩下的执行次数</param>
         /// <param name="period">间隔时间</param>
         /// <param name="isAlarm"></param>
         /// <param name="message"></param>
-        public PeriodTimingAlertCommand(DateTime alertTime, Times remainTimes, TimeSpan period, bool isAlarm,
+        /// <param name="Guid"></param>
+        public TimingAlertCommand(Guid id, DateTime alertTime, Times remainTimes, TimeSpan period, int? isAlarm,
             string message)
-            : base(alertTime, isAlarm, message)
+            : base(id,alertTime, isAlarm, message)
         {
             _remainTimes = remainTimes;
             _period = period;

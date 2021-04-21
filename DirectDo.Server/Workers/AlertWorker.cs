@@ -22,7 +22,7 @@ namespace DirectDo.Server.Workers
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("AlertService running at: {time}", DateTimeOffset.Now);
-            await Task.Run(() => _alertService.RunAlertAsync(stoppingToken), stoppingToken);
+            await _alertService.RunAlertAsync(stoppingToken);
         }
     }
 }

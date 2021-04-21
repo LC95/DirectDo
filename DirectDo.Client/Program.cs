@@ -2,55 +2,63 @@
 using NetMQ.Sockets;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DirectDo.Client
 {
     internal class Program
     {
-        private readonly PushSocket _pushSocket = new(">tcp://127.0.0.1:5556");
-        private readonly SubscriberSocket _subscriberSocket = new(">tcp://127.0.0.1:5557");
+        private readonly DealerSocket _dealerSocket;
+        private readonly NetMQRuntime _runtime;
 
         private Program()
         {
-            _subscriberSocket.SubscribeToAnyTopic();
+            _runtime = new NetMQRuntime();
+            _dealerSocket = new(">tcp://127.0.0.1:5556");
+            _dealerSocket.Options.Identity = Guid.NewGuid().ToByteArray();
         }
 
-        private static async Task Main(string[] args)
+        private static void Main(string[] args)
         {
-            await new Program().Run(args);
+            var source = new CancellationTokenSource(TimeSpan.FromMilliseconds(9000));
+            var p = new Program();
+            p.Run(CreateMessage(args), source.Token);
         }
 
-        private async Task Run(string[] args)
+        private static NetMQMessage CreateMessage(string[] args)
         {
-            var subscribeJob = Task.Run(DoOnSubscriberListen);
+            var cmdId = Guid.NewGuid();
+            var argsAll = new List<string>(args) {$"#{cmdId}"};
+            var msgToSend = JsonConvert.SerializeObject(argsAll);
 
-            _pushSocket.SendFrame(JsonConvert.SerializeObject(args));
-            Console.ReadKey();
+            var netMessage = new NetMQMessage();
+            netMessage.AppendEmptyFrame();
+            netMessage.Append(msgToSend);
+
+            return netMessage;
         }
 
-        private async Task DoOnSubscriberListen()
+        private void Run(NetMQMessage message, CancellationToken token)
         {
-            while (true)
+            _runtime.Run(EstablishingConnectionAsync(message, token));
+        }
+
+        private async Task EstablishingConnectionAsync(NetMQMessage message, CancellationToken token)
+        {
+            try
             {
-                string msg = "";
-                var (title, isMore) = await _subscriberSocket.ReceiveFrameStringAsync();
-                if (isMore)
-                {
-                    msg = _subscriberSocket.ReceiveFrameString();
-                }
+                _dealerSocket.SendMultipartMessage(message);
 
-                Console.WriteLine($"{title}:{msg}");
-                Console.WriteLine("按任意键退出！");
+                var msg = await _dealerSocket.ReceiveMultipartMessageAsync(cancellationToken: token);
+
+                Console.WriteLine($"From Server : {msg[1].ConvertToString()}");
             }
-        }
-
-        private static Task SendMessageAsync(string msg)
-        {
-            var client = new RequestSocket(">tcp://localhost:5556");
-
-            client.SendFrame(msg); // Message
-            return Task.CompletedTask;
+            catch (OperationCanceledException e)
+            {
+                Console.WriteLine("服务器无响应");
+            }
         }
     }
 }

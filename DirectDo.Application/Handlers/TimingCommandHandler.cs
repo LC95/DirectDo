@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace DirectDo.Application.Handlers
 {
-    public class RepeatTimingCommandHandler : INotificationHandler<PeriodTimingAlertCommand>
+    public class TimingCommandHandler : INotificationHandler<TimingAlertCommand>
     {
         private readonly INotify _notify;
 
-        public RepeatTimingCommandHandler(INotify notify)
+        public TimingCommandHandler(INotify notify)
         {
             _notify = notify;
         }
 
-        public async Task Handle(PeriodTimingAlertCommand alertCommand, CancellationToken cancellationToken)
+        public async Task Handle(TimingAlertCommand alertCommand, CancellationToken cancellationToken)
         {
-            await _notify.NotifyAsync(alertCommand.Message);
+            await _notify.NotifyAsync(alertCommand.Message, alertCommand.IsAlarm);
             alertCommand.AfterRun();
             Console.WriteLine($"ID:{alertCommand.Id} is handled and its complete status is {alertCommand.IsComplete}");
         }

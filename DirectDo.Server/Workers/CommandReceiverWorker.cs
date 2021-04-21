@@ -1,4 +1,3 @@
-
 /* 项目“DirectDo.Server (net5.0-windows10.0.19041.0)”的未合并的更改
 在此之前:
 using System;
@@ -9,6 +8,7 @@ using CommandLine;
 在此之后:
 using CommandLine;
 */
+
 using DirectDo.Application;
 using DirectDo.Domain;
 using DirectDo.Domain.Commands;
@@ -19,17 +19,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NetMQ;
 using NetMQ.Sockets;
-
-/* 项目“DirectDo.Server (net5.0-windows10.0.19041.0)”的未合并的更改
-在此之前:
-using Newtonsoft.Json;
-在此之后:
-using Newtonsoft.Json;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-*/
 using Newtonsoft.Json;
 using System;
 using System.Threading;
@@ -41,19 +30,22 @@ namespace DirectDo.Server.Workers
     {
         private readonly ILogger<CommandReceiverWorker> _logger;
         private readonly IMediator _mediator;
-        private readonly PublisherSocket _publisher = new("@tcp://127.0.0.1:5557");
-        private readonly PullSocket _pullSocket = new("@tcp://127.0.0.1:5556");
+        private readonly NetMQRuntime _runtime;
+        private readonly RouterSocket _router;
 
         public CommandReceiverWorker(ILogger<CommandReceiverWorker> logger,
             IMediator mediator)
         {
+            _runtime = new NetMQRuntime();
+            _router = new("@tcp://127.0.0.1:5556");
             _logger = logger;
             _mediator = mediator;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await ListenerTask();
+            _runtime.Run(stoppingToken, ListenerTask());
+            return Task.CompletedTask;
         }
 
         private async Task ListenerTask()
@@ -61,22 +53,26 @@ namespace DirectDo.Server.Workers
             _logger.LogInformation("Command Receiver Worker Started!");
             while (true)
             {
-                var (paramMsg, _) = await _pullSocket.ReceiveFrameStringAsync();
-                _logger.LogInformation("From Pusher : {0}", paramMsg);
+                var paramMsg = await _router.ReceiveMultipartMessageAsync();
+                var cmdParam = paramMsg[2].ConvertToString();
+                _logger.LogInformation("From Pusher : {0}",cmdParam );
 
                 try
                 {
-                    var cmd = BuildCommand(paramMsg);
-                    _publisher.SendMoreFrame("Received").SendFrame($"Your command Id {cmd.Id} received :{paramMsg}");
+                    var cmd = BuildCommand(cmdParam);
+                    var messageToClient = new NetMQMessage();
+                    messageToClient.Append(paramMsg[0]);
+                    messageToClient.AppendEmptyFrame();
+                    messageToClient.Append($"Server Has Received Your Command : {cmd.Id}");
+                    _router.SendMultipartMessage(messageToClient);
 
                     if (cmd != null) await _mediator.Publish(cmd);
                 }
                 catch (Exception e)
                 {
                     _logger.LogError(e.ToString());
-                    _publisher.SendMoreFrame("Error").SendFrame(e.ToString());
+                    _router.SendMoreFrame("Error").SendFrame(e.ToString());
                 }
-
             }
         }
 
@@ -84,7 +80,7 @@ namespace DirectDo.Server.Workers
         {
             var args = JsonConvert.DeserializeObject<string[]>(param);
 
-            IControlCommand command = Utils.BuildCommand(args);
+            var command = Utils.BuildCommand(args);
             return command;
         }
 
@@ -92,8 +88,8 @@ namespace DirectDo.Server.Workers
         {
             try
             {
-                _publisher.Dispose();
-                _pullSocket.Dispose();
+                _router.Dispose();
+                _runtime.Dispose();
             }
             catch (Exception e)
             {

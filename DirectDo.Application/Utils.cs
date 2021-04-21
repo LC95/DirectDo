@@ -7,7 +7,6 @@ namespace DirectDo.Application
 {
     public static class Utils
     {
-
         private static Options OptionsParse(string[] args)
         {
             var option = new Options();
@@ -15,29 +14,27 @@ namespace DirectDo.Application
             {
                 if (arg.StartsWith('@'))
                 {
-                    option.At = arg.Substring(1);
+                    option.At = arg[1..];
                 }
 
                 if (arg.StartsWith('>'))
                 {
-                    option.After = arg.Substring(1);
+                    option.After = arg[1..];
                 }
 
                 if (arg.StartsWith('!'))
                 {
-                    if (arg.Length == 1)
-                    {
-                        option.AlarmNumber = null;
-                    }
-                    else
-                    {
-                        option.AlarmNumber = int.Parse(arg.Substring(1));
-                    }
+                    option.AlarmNumber = arg.Length == 1 ? 1 : int.Parse(arg[1..]);
+                }
+
+                if (arg.StartsWith('#'))
+                {
+                    option.ReqId = Guid.Parse(arg[1..]);
                 }
 
                 if (arg.StartsWith('<'))
                 {
-                    option.MaintainTimes = int.Parse(arg.Substring(1));
+                    option.MaintainTimes = int.Parse(arg[1..]);
                 }
 
                 if (arg.StartsWith('&'))
@@ -45,6 +42,7 @@ namespace DirectDo.Application
                     option.Message = arg.Substring(1);
                 }
             }
+
             return option;
         }
 
@@ -52,26 +50,29 @@ namespace DirectDo.Application
         {
             DateTime? at = null;
             TimeSpan? after = null;
-            var isAlarm = options.AlarmNumber != null;
+            var id = options.ReqId;
+            var alarm = options.AlarmNumber;
             var maintainTimes = options.MaintainTimes;
+
 
             if (!string.IsNullOrEmpty(options.At)) at = DateTime.Parse(options.At);
 
             if (!string.IsNullOrEmpty(options.After)) after = Utils.ParsePeriod(options.After);
 
-            if (at != null)
+            if (after != null || at != null)
             {
-                var cmd = new AtTimingCommand(at.Value, isAlarm, options.Message);
-                return new TimingCreatedNotification(cmd);
-            }
+                //没有传计时
+                if (after != null)
+                {
+                    at ??= DateTime.Now.Add(after.Value);
+                }
 
-            if (after != null)
-            {
-                var next = DateTime.Now.Add(after.Value);
-                var cmd = new PeriodTimingAlertCommand(next, new Times(maintainTimes), after.Value, isAlarm,
+                after ??= TimeSpan.Zero;
+                var cmd = new TimingAlertCommand(id, at.Value, new Times(maintainTimes), after.Value, alarm,
                     options.Message);
                 return new TimingCreatedNotification(cmd);
             }
+
 
             if (string.IsNullOrEmpty(options.Search))
                 return new SearchCommand(options.Search);
@@ -79,9 +80,12 @@ namespace DirectDo.Application
 
             throw new ArgumentException("参数无法转换");
         }
-        public static IControlCommand BuildCommand(string[] args){
+
+        public static IControlCommand BuildCommand(string[] args)
+        {
             return BuildCommand(OptionsParse(args));
         }
+
         public static TimeSpan ParsePeriod(string s)
         {
             var days = 0;

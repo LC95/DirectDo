@@ -8,4 +8,12 @@
       <ProjectReference Include="..\DirectDo.Domain\DirectDo.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="ManagedBass" Version="3.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Audios\bell.wav" />
+    </ItemGroup>
+
 </Project>

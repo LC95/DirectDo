@@ -1,5 +1,4 @@
 ﻿using DirectDo.Application;
-
 # if WINDOWS10_0_19041_0
 using Microsoft.Toolkit.Uwp.Notifications;
 # endif
@@ -13,7 +12,8 @@ namespace DirectDo.Server.Notifiers
     {
         string p = Path.GetFullPath("Images/bell.png");
         string h = Path.GetFullPath("Images/hero_image.jpeg");
-        public Task NotifyAsync(string content)
+
+        public Task NotifyAsync(string content, int? alarm)
         {
 #if WINDOWS10_0_19041_0
             new ToastContentBuilder()
@@ -28,7 +28,6 @@ namespace DirectDo.Server.Notifiers
             .Show(); // 
 # endif
             return Task.CompletedTask;
-
         }
     }
 }
