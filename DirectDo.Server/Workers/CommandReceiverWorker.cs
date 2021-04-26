@@ -66,7 +66,8 @@ namespace DirectDo.Server.Workers
                     messageToClient.Append($"Server Has Received Your Command : {cmd.Id}");
                     _router.SendMultipartMessage(messageToClient);
 
-                    if (cmd != null) await _mediator.Publish(cmd);
+                    if (cmd != null) 
+                        await _mediator.Publish(cmd);
                 }
                 catch (Exception e)
                 {
