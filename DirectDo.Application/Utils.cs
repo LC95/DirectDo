@@ -57,7 +57,7 @@ namespace DirectDo.Application
 
             if (!string.IsNullOrEmpty(options.At)) at = DateTime.Parse(options.At);
 
-            if (!string.IsNullOrEmpty(options.After)) after = Utils.ParsePeriod(options.After);
+            if (!string.IsNullOrEmpty(options.After)) after = ParsePeriod(options.After);
 
             if (after != null || at != null)
             {
@@ -112,6 +112,11 @@ namespace DirectDo.Application
 
                     num = 0;
                 }
+
+            if (num != 0)
+            {
+                seconds = num;
+            }
 
             return new TimeSpan(days, hours, minutes, seconds);
         }

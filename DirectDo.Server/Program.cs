@@ -15,21 +15,21 @@ namespace DirectDo.Server
 {
     public class Program
     {
-        private static readonly Mutex _mutex;
-        private static readonly bool _isCreatedNew;
+        private static readonly Mutex Mutex;
+        private static readonly bool IsCreatedNew;
 
         static Program()
         {
-            _mutex = new Mutex(true, "Global\\DirectDo.Server", out _isCreatedNew);
+            Mutex = new Mutex(true, "Global\\DirectDo.Server", out IsCreatedNew);
         }
 
         public static void Main(string[] args)
         {
-            if (_isCreatedNew)
+            if (IsCreatedNew)
             {
-                _mutex.WaitOne();
+                Mutex.WaitOne();
                 CreateHostBuilder(args).Build().Run();
-                _mutex.ReleaseMutex();
+                Mutex.ReleaseMutex();
             }
             else
             {
@@ -57,7 +57,6 @@ namespace DirectDo.Server
                     else
                     {
                         services.AddSingleton<INotify, WindowsNotifier>();
-
                     }
 
                     services.BuildServiceProvider();

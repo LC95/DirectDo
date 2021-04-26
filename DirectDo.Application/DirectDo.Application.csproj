@@ -9,11 +9,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="ManagedBass" Version="3.0.0" />
+      <None Remove="Audios\bell.wav" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Audios\bell.wav" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     </ItemGroup>
 
 </Project>
