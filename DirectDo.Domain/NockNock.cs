@@ -10,6 +10,9 @@ using Microsoft.Extensions.Logging;
 
 namespace DirectDo.Domain
 {
+    /// <summary>
+    /// TODO:remove sync problem
+    /// </summary>
     public class NockNock : IClock
     {
         private CancellationTokenSource _cancellationTokenSource;
@@ -42,6 +45,12 @@ namespace DirectDo.Domain
             return _channel.Writer.WriteAsync(indexer);
         }
 
+        public void Remove(Guid notificationId)
+        {
+            var d = _sortedIndexers.FirstOrDefault(t => t.Id == notificationId);
+            _sortedIndexers.Remove(d);
+        }
+
         /// <summary>
         /// This loop method will executed in only one thread
         /// </summary>
@@ -57,7 +66,7 @@ namespace DirectDo.Domain
                 {
                     _cancellationTokenSource.Cancel();
                     _hasCanceled.Wait();
-                    _logger.LogInformation($"A Cancellation has finished for a new period {timeIndexer}");
+                    _logger.LogInformation($"A Cancellation has finished for a new nock {timeIndexer}");
                 }
             }
         }
@@ -80,13 +89,14 @@ namespace DirectDo.Domain
                     }
 
                     var recentTimeIndexer = _sortedIndexers.FirstOrDefault();
+                    _sortedIndexers.Remove(recentTimeIndexer);
+
                     var cmd = _alertCommandRepository.Find(recentTimeIndexer.Id);
                     //执行通知命令
                     await _mediator.Publish(cmd);
                     if (cmd.IsComplete)
                     {
                         _alertCommandRepository.RemoveCommand(cmd.Id);
-                        _sortedIndexers.Remove(recentTimeIndexer);
                     }
                     else
                     {

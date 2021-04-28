@@ -1,5 +1,6 @@
 using MediatR;
 using System;
+using System.Text;
 
 namespace DirectDo.Domain.Models
 {
@@ -42,18 +43,18 @@ namespace DirectDo.Domain.Models
 
     public abstract class TimingCommand : IControlCommand
     {
-        public readonly int? IsAlarm;
+        public readonly bool IsAlarm;
 
         public readonly string Message;
 
         public DateTime AlertTime;
 
-        protected TimingCommand(Guid id, DateTime alertTime, int? isAlarm, string message)
+        protected TimingCommand(Guid id, DateTime alertTime, bool isAlarm, string message)
         {
             Id = id;
             AlertTime = alertTime;
             IsAlarm = isAlarm;
-            Message = message;
+            Message = message ?? string.Empty;
         }
 
         public Guid Id { get; }
@@ -62,5 +63,16 @@ namespace DirectDo.Domain.Models
         public abstract void AfterRun();
 
         public TimeIndexer Indexer => new(Id, AlertTime);
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.Append($"Id:{Id}---");
+            sb.Append($"Message:{Message}---");
+            sb.AppendFormat("IsAlarm:{0}---", IsAlarm);
+            sb.Append($"IsComplete:{IsComplete}---");
+            sb.Append($"AlertTime:{AlertTime}---");
+            return sb.ToString();
+        }
     }
 }

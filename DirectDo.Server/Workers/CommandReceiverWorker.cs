@@ -21,6 +21,7 @@ using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
 using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,12 +35,12 @@ namespace DirectDo.Server.Workers
         private readonly RouterSocket _router;
 
         public CommandReceiverWorker(ILogger<CommandReceiverWorker> logger,
-            IMediator mediator)
+            IMediator mediator, RouterSocket router, NetMQRuntime runtime)
         {
-            _runtime = new NetMQRuntime();
-            _router = new("@tcp://127.0.0.1:5556");
             _logger = logger;
             _mediator = mediator;
+            _router = router;
+            _runtime = runtime;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -54,35 +55,47 @@ namespace DirectDo.Server.Workers
             while (true)
             {
                 var paramMsg = await _router.ReceiveMultipartMessageAsync();
-                var cmdParam = paramMsg[2].ConvertToString();
-                _logger.LogInformation("From Pusher : {0}",cmdParam );
+                var cmdParam = paramMsg[2].ConvertToString(Encoding.UTF8);
+                var cmdType = paramMsg[1].ConvertToString();
+                _logger.LogInformation("From Pusher : {0}", cmdParam);
 
                 try
                 {
-                    var cmd = BuildCommand(cmdParam);
-                    var messageToClient = new NetMQMessage();
-                    messageToClient.Append(paramMsg[0]);
-                    messageToClient.AppendEmptyFrame();
-                    messageToClient.Append($"Server Has Received Your Command : {cmd.Id}");
-                    _router.SendMultipartMessage(messageToClient);
-
-                    if (cmd != null) 
+                    var cmd = BuildCommand(cmdParam, cmdType);
+                    if (cmd != null)
                         await _mediator.Publish(cmd);
                 }
                 catch (Exception e)
                 {
                     _logger.LogError(e.ToString());
-                    _router.SendMoreFrame("Error").SendFrame(e.ToString());
+                    // _router.SendMultipartMessage(BuildSendBackMessage(paramMsg[0].Buffer, e.ToString()));
                 }
             }
         }
 
-        private IControlCommand BuildCommand(string param)
-        {
-            var args = JsonConvert.DeserializeObject<string[]>(param);
 
-            var command = Utils.BuildCommand(args);
-            return command;
+        private static IControlCommand BuildCommand(string param, string commandType)
+        {
+            switch (commandType)
+            {
+                case DoCommandTypes.Add:
+                {
+                    var o = JsonConvert.DeserializeObject<AddOptions>(param);
+                    return Utils.BuildCommand(o);
+                }
+                case DoCommandTypes.Delete:
+                {
+                    var o = JsonConvert.DeserializeObject<DeleteOptions>(param);
+                    return Utils.BuildCommand(o);
+                }
+                case DoCommandTypes.Lookup:
+                {
+                    var o = JsonConvert.DeserializeObject<LookOptions>(param);
+                    return Utils.BuildCommand(o);
+                }
+            }
+
+            return null;
         }
 
         public override void Dispose()

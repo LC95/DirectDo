@@ -11,7 +11,7 @@ namespace DirectDo.Server.Notifiers
         private readonly Uri _p = new(Path.GetFullPath("Images/bell.png"));
         private readonly Uri _h = new(Path.GetFullPath("Images/hero_image.jpeg"));
         private readonly Uri _a = new(Path.GetFullPath("Audios/bell.wav"));
-        public Task NotifyAsync(string content, int? alarm)
+        public Task NotifyAsync(string content, bool alarm)
         {
             var builder = new ToastContentBuilder()
                 // .AddArgument("action", "viewConversation")
@@ -22,7 +22,7 @@ namespace DirectDo.Server.Notifiers
                 .AddText("通知：")
                 .AddCustomTimeStamp(DateTime.Now)
                 .AddText(content);
-            if (alarm != null)
+            if (alarm)
             {
                 builder.AddAudio(_a, false, false);
             }

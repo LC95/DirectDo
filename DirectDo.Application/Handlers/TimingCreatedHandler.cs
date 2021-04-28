@@ -7,21 +7,24 @@ using DirectDo.Domain;
 
 namespace DirectDo.Application.Handlers
 {
-    public class TimingCreatedNotificationHandler : INotificationHandler<TimingCreatedNotification>
+    public class TimingCreatedHandler : INotificationHandler<TimingCreatedNotification>
     {
         private readonly IAlertCommandRepository _alertCommandRepository;
         private readonly IClock _clock;
+        private readonly IServerMessenger _messenger;
 
-        public TimingCreatedNotificationHandler(IAlertCommandRepository alertCommandRepository, IClock clock)
+        public TimingCreatedHandler(IAlertCommandRepository alertCommandRepository, IClock clock, IServerMessenger messenger)
         {
             _alertCommandRepository = alertCommandRepository;
             _clock = clock;
+            _messenger = messenger;
         }
 
         public async Task Handle(TimingCreatedNotification notification, CancellationToken cancellationToken)
         {
             await _clock.SetNewAlertTimeAsync(notification.AlertCommand.Indexer);
             _alertCommandRepository.AddCommand(notification.AlertCommand);
+            _messenger.SendMessage(notification.Id, "Your Commanded Has Been Handled");
         }
     }
 }

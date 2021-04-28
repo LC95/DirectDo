@@ -5,13 +5,12 @@ namespace DirectDo.Domain.Commands
 {
     public class DeleteCommand : IControlCommand
     {
-        public DeleteCommand(string id)
+        public DeleteCommand(Guid id)
         {
-            TimingId = id;
+            Id = id;
         }
 
-        public string TimingId { get; }
 
-        public Guid Id => Guid.NewGuid();
+        public Guid Id { get; }
     }
 }

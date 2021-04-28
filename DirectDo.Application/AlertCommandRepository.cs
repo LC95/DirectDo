@@ -12,25 +12,23 @@ namespace DirectDo.Application
     public class AlertCommandRepository : IAlertCommandRepository
     {
         private readonly ILogger<AlertCommandRepository> _logger;
-        private readonly IMediator _mediator;
 
         //等待的通知队列
-        private readonly Dictionary<Guid, TimingCommand> commands = new();
+        private readonly Dictionary<Guid, TimingCommand> _commands = new();
 
-        public AlertCommandRepository(IMediator mediator, ILogger<AlertCommandRepository> logger)
+        public AlertCommandRepository(ILogger<AlertCommandRepository> logger)
         {
-            _mediator = mediator;
             _logger = logger;
         }
 
         public void AddCommand(TimingCommand timingCommand)
         {
-            commands.Add(timingCommand.Id, timingCommand);
+            _commands.Add(timingCommand.Id, timingCommand);
         }
 
         public void RemoveCommand(Guid id)
         {
-            commands.Remove(id);
+            _commands.Remove(id);
         }
 
         public void UpdateCommand(TimingCommand command)
@@ -40,7 +38,12 @@ namespace DirectDo.Application
 
         public TimingCommand Find(Guid id)
         {
-            return commands[id];
+            return _commands[id];
+        }
+
+        public IEnumerable<TimingCommand> All()
+        {
+            return _commands.Values;
         }
     }
 }

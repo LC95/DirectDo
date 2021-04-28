@@ -11,6 +11,8 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectDo.Domain;
+using NetMQ;
+using NetMQ.Sockets;
 
 namespace DirectDo.Server
 {
@@ -51,7 +53,10 @@ namespace DirectDo.Server
                             Assembly.GetAssembly(typeof(AlertCommandRepository)),
                             Assembly.GetAssembly(typeof(INotify)))
                         .AddSingleton<IAlertCommandRepository, AlertCommandRepository>()
-                        .AddSingleton<IClock, NockNock>();
+                        .AddSingleton<IClock, NockNock>()
+                        .AddSingleton<IServerMessenger, ServerMessenger>()
+                        .AddSingleton<NetMQRuntime>()
+                        .AddSingleton<RouterSocket>(new RouterSocket("@tcp://127.0.0.1:5556"));
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                     {
                         services.AddSingleton<INotify, LinuxNotifier>();
