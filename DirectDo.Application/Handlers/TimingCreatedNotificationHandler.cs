@@ -3,22 +3,25 @@ using DirectDo.Domain.Models;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using DirectDo.Domain;
 
 namespace DirectDo.Application.Handlers
 {
     public class TimingCreatedNotificationHandler : INotificationHandler<TimingCreatedNotification>
     {
-        private readonly IAlertService _alertService;
+        private readonly IAlertCommandRepository _alertCommandRepository;
+        private readonly IClock _clock;
 
-        public TimingCreatedNotificationHandler(IAlertService alertService)
+        public TimingCreatedNotificationHandler(IAlertCommandRepository alertCommandRepository, IClock clock)
         {
-            _alertService = alertService;
+            _alertCommandRepository = alertCommandRepository;
+            _clock = clock;
         }
 
-        public Task Handle(TimingCreatedNotification notification, CancellationToken cancellationToken)
+        public async Task Handle(TimingCreatedNotification notification, CancellationToken cancellationToken)
         {
-            _alertService.Add(notification.AlertCommand);
-            return Task.CompletedTask;
+            await _clock.SetNewAlertTimeAsync(notification.AlertCommand.Indexer);
+            _alertCommandRepository.AddCommand(notification.AlertCommand);
         }
     }
 }

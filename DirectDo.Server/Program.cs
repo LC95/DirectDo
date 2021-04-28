@@ -10,6 +10,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using DirectDo.Domain;
 
 namespace DirectDo.Server
 {
@@ -47,9 +48,10 @@ namespace DirectDo.Server
                         .AddHostedService<AlertWorker>()
                         .AddHostedService<CommandReceiverWorker>()
                         .AddMediatR(
-                            Assembly.GetAssembly(typeof(AlertService)),
+                            Assembly.GetAssembly(typeof(AlertCommandRepository)),
                             Assembly.GetAssembly(typeof(INotify)))
-                        .AddSingleton<IAlertService, AlertService>();
+                        .AddSingleton<IAlertCommandRepository, AlertCommandRepository>()
+                        .AddSingleton<IClock, NockNock>();
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                     {
                         services.AddSingleton<INotify, LinuxNotifier>();

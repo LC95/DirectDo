@@ -11,12 +11,11 @@ namespace DirectDo.Server.Notifiers
         private readonly Uri _p = new(Path.GetFullPath("Images/bell.png"));
         private readonly Uri _h = new(Path.GetFullPath("Images/hero_image.jpeg"));
         private readonly Uri _a = new(Path.GetFullPath("Audios/bell.wav"));
-        private readonly Random _r = new Random();
         public Task NotifyAsync(string content, int? alarm)
         {
             var builder = new ToastContentBuilder()
                 // .AddArgument("action", "viewConversation")
-                .AddArgument("conversationId", _r.Next(30000))
+                .AddArgument("conversationId", 8378)
                 .AddAppLogoOverride(_p, ToastGenericAppLogoCrop.Default)
                 .AddHeroImage(_h)
                 .AddAttributionText("By Adam Ma")

@@ -44,11 +44,11 @@ namespace DirectDo.Server.Workers
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _runtime.Run(stoppingToken, ListenerTask());
+            _runtime.Run(stoppingToken, ListenerTaskAsync());
             return Task.CompletedTask;
         }
 
-        private async Task ListenerTask()
+        private async Task ListenerTaskAsync()
         {
             _logger.LogInformation("Command Receiver Worker Started!");
             while (true)

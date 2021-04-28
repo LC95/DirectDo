@@ -4,25 +4,26 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using DirectDo.Domain;
 
 namespace DirectDo.Server.Workers
 {
     public class AlertWorker : BackgroundService
     {
-        private readonly IAlertService _alertService;
+        private readonly IClock _clock;
         private readonly ILogger<AlertWorker> _logger;
 
-        public AlertWorker(ILogger<AlertWorker> logger, IAlertService alertService)
+        public AlertWorker(ILogger<AlertWorker> logger, IClock clock)
         {
             _logger = logger;
-            _alertService = alertService;
+            _clock = clock;
         }
 
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("AlertService running at: {time}", DateTimeOffset.Now);
-            await _alertService.RunAlertAsync(stoppingToken);
+            await _clock.BeginWaitAsync();
         }
     }
 }

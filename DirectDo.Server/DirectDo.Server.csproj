@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-        <OutputType>WinExe</OutputType>
+<!--        <OutputType>WinExe</OutputType>-->
 		<TargetFrameworks>net5.0;net5.0-windows10.0.19041.0</TargetFrameworks>
 		<UserSecretsId>dotnet-DirectDo.Service-27AF12DE-654D-40F6-BE3A-F0D4EA570BA8</UserSecretsId>
 		<ApplicationIcon>bitbug_favicon.ico</ApplicationIcon>
