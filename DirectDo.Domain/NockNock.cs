@@ -57,7 +57,7 @@ namespace DirectDo.Domain
                 {
                     _cancellationTokenSource.Cancel();
                     _hasCanceled.Wait();
-                    _logger.LogInformation($"A Cancellation has finished for a new period {timeIndexer}");
+                    _logger.LogInformation($"A Cancellation has finished for a new nock {timeIndexer}");
                 }
             }
         }
@@ -80,13 +80,14 @@ namespace DirectDo.Domain
                     }
 
                     var recentTimeIndexer = _sortedIndexers.FirstOrDefault();
+                    _sortedIndexers.Remove(recentTimeIndexer);
+
                     var cmd = _alertCommandRepository.Find(recentTimeIndexer.Id);
                     //执行通知命令
                     await _mediator.Publish(cmd);
                     if (cmd.IsComplete)
                     {
                         _alertCommandRepository.RemoveCommand(cmd.Id);
-                        _sortedIndexers.Remove(recentTimeIndexer);
                     }
                     else
                     {

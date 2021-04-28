@@ -42,13 +42,13 @@ namespace DirectDo.Domain.Models
 
     public abstract class TimingCommand : IControlCommand
     {
-        public readonly int? IsAlarm;
+        public readonly bool IsAlarm;
 
         public readonly string Message;
 
         public DateTime AlertTime;
 
-        protected TimingCommand(Guid id, DateTime alertTime, int? isAlarm, string message)
+        protected TimingCommand(Guid id, DateTime alertTime, bool isAlarm, string message)
         {
             Id = id;
             AlertTime = alertTime;

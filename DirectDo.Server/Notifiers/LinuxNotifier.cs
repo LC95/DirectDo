@@ -10,9 +10,9 @@ namespace DirectDo.Server.Notifiers
         private readonly string _audioPath =
             Path.Combine(Directory.GetCurrentDirectory()) + "/Audios/bell.wav";
 
-        public async Task NotifyAsync(string content, int? id)
+        public async Task NotifyAsync(string content, bool sound)
         {
-            if (id != null)
+            if (sound)
             {
                 var audioProcess = new Process()
                 {

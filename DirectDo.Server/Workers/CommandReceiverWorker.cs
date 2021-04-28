@@ -21,6 +21,7 @@ using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
 using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -54,34 +55,39 @@ namespace DirectDo.Server.Workers
             while (true)
             {
                 var paramMsg = await _router.ReceiveMultipartMessageAsync();
-                var cmdParam = paramMsg[2].ConvertToString();
-                _logger.LogInformation("From Pusher : {0}",cmdParam );
+                var cmdParam = paramMsg[2].ConvertToString(Encoding.UTF8);
+                _logger.LogInformation("From Pusher : {0}", cmdParam);
 
                 try
                 {
                     var cmd = BuildCommand(cmdParam);
-                    var messageToClient = new NetMQMessage();
-                    messageToClient.Append(paramMsg[0]);
-                    messageToClient.AppendEmptyFrame();
-                    messageToClient.Append($"Server Has Received Your Command : {cmd.Id}");
-                    _router.SendMultipartMessage(messageToClient);
+                    _router.SendMultipartMessage(BuildSendBackMessage(paramMsg, $"Server Received Your Command"));
 
-                    if (cmd != null) 
+                    if (cmd != null)
                         await _mediator.Publish(cmd);
                 }
                 catch (Exception e)
                 {
                     _logger.LogError(e.ToString());
-                    _router.SendMoreFrame("Error").SendFrame(e.ToString());
+                    _router.SendMultipartMessage(BuildSendBackMessage(paramMsg, e.ToString()));
                 }
             }
         }
 
+        static NetMQMessage BuildSendBackMessage(NetMQMessage origin, string msg)
+        {
+            var messageToClient = new NetMQMessage();
+            messageToClient.Append(origin[0]);
+            messageToClient.AppendEmptyFrame();
+            messageToClient.Append(msg);
+            return messageToClient;
+        }
+
         private IControlCommand BuildCommand(string param)
         {
-            var args = JsonConvert.DeserializeObject<string[]>(param);
+            var options = JsonConvert.DeserializeObject<AddOptions>(param);
 
-            var command = Utils.BuildCommand(args);
+            var command = Utils.BuildCommand(options);
             return command;
         }
 

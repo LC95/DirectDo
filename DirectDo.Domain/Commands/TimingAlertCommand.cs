@@ -49,7 +49,7 @@ namespace DirectDo.Domain.Commands
         /// <param name="isAlarm"></param>
         /// <param name="message"></param>
         /// <param name="Guid"></param>
-        public TimingAlertCommand(Guid id, DateTime alertTime, Times remainTimes, TimeSpan period, int? isAlarm,
+        public TimingAlertCommand(Guid id, DateTime alertTime, Times remainTimes, TimeSpan period, bool isAlarm,
             string message)
             : base(id,alertTime, isAlarm, message)
         {

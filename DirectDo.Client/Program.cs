@@ -3,62 +3,34 @@ using NetMQ.Sockets;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Threading;
 using System.Threading.Tasks;
+using DirectDo.Application;
 
 namespace DirectDo.Client
 {
     internal class Program
     {
-        private readonly DealerSocket _dealerSocket;
-        private readonly NetMQRuntime _runtime;
+      
 
-        private Program()
+     
+
+        private static async Task Main(string[] args)
         {
-            _runtime = new NetMQRuntime();
-            _dealerSocket = new(">tcp://127.0.0.1:5556");
-            _dealerSocket.Options.Identity = Guid.NewGuid().ToByteArray();
-        }
+            var p = new MessageSender();
 
-        private static void Main(string[] args)
-        {
-            var source = new CancellationTokenSource(TimeSpan.FromMilliseconds(9000));
-            var p = new Program();
-            p.Run(CreateMessage(args), source.Token);
-        }
-
-        private static NetMQMessage CreateMessage(string[] args)
-        {
-            var cmdId = Guid.NewGuid();
-            var argsAll = new List<string>(args) {$"#{cmdId}"};
-            var msgToSend = JsonConvert.SerializeObject(argsAll);
-
-            var netMessage = new NetMQMessage();
-            netMessage.AppendEmptyFrame();
-            netMessage.Append(msgToSend);
-
-            return netMessage;
-        }
-
-        private void Run(NetMQMessage message, CancellationToken token)
-        {
-            _runtime.Run(EstablishingConnectionAsync(message, token));
-        }
-
-        private async Task EstablishingConnectionAsync(NetMQMessage message, CancellationToken token)
-        {
             try
             {
-                _dealerSocket.SendMultipartMessage(message);
-
-                var msg = await _dealerSocket.ReceiveMultipartMessageAsync(cancellationToken: token);
-
-                Console.WriteLine($"From Server : {msg[1].ConvertToString()}");
+                await p.SendMessageAsync(args);
             }
-            catch (OperationCanceledException e)
+            catch (Exception e)
             {
-                Console.WriteLine("服务器无响应");
+                Console.WriteLine(e);
             }
         }
+
+  
     }
 }

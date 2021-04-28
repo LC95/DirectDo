@@ -1,4 +1,7 @@
 using System;
+using System.CommandLine;
+using System.CommandLine.Invocation;
+using System.Threading.Tasks;
 using DirectDo.Domain.Commands;
 using DirectDo.Domain.Events;
 using DirectDo.Domain.Models;
@@ -7,57 +10,18 @@ namespace DirectDo.Application
 {
     public static class Utils
     {
-        private static Options OptionsParse(string[] args)
-        {
-            var option = new Options();
-            foreach (var arg in args)
-            {
-                if (arg.StartsWith('@'))
-                {
-                    option.At = arg[1..];
-                }
-
-                if (arg.StartsWith('>'))
-                {
-                    option.After = arg[1..];
-                }
-
-                if (arg.StartsWith('!'))
-                {
-                    option.AlarmNumber = arg.Length == 1 ? 1 : int.Parse(arg[1..]);
-                }
-
-                if (arg.StartsWith('#'))
-                {
-                    option.ReqId = Guid.Parse(arg[1..]);
-                }
-
-                if (arg.StartsWith('<'))
-                {
-                    option.MaintainTimes = int.Parse(arg[1..]);
-                }
-
-                if (arg.StartsWith('&'))
-                {
-                    option.Message = arg.Substring(1);
-                }
-            }
-
-            return option;
-        }
-
-        private static IControlCommand BuildCommand(Options options)
+        public static IControlCommand BuildCommand(AddOptions addOptions)
         {
             DateTime? at = null;
             TimeSpan? after = null;
-            var id = options.ReqId;
-            var alarm = options.AlarmNumber;
-            var maintainTimes = options.MaintainTimes;
+            var id = addOptions.ReqId;
+            var alarm = addOptions.Sound;
+            var maintainTimes = addOptions.Times;
 
 
-            if (!string.IsNullOrEmpty(options.At)) at = DateTime.Parse(options.At);
+            if (!string.IsNullOrEmpty(addOptions.At)) at = DateTime.Parse(addOptions.At);
 
-            if (!string.IsNullOrEmpty(options.After)) after = ParsePeriod(options.After);
+            if (!string.IsNullOrEmpty(addOptions.After)) after = ParsePeriod(addOptions.After);
 
             if (after != null || at != null)
             {
@@ -69,22 +33,13 @@ namespace DirectDo.Application
 
                 after ??= TimeSpan.Zero;
                 var cmd = new TimingAlertCommand(id, at.Value, new Times(maintainTimes), after.Value, alarm,
-                    options.Message);
+                    addOptions.Message);
                 return new TimingCreatedNotification(cmd);
             }
-
-
-            if (string.IsNullOrEmpty(options.Search))
-                return new SearchCommand(options.Search);
-            if (string.IsNullOrWhiteSpace(options.Delete)) return new DeleteCommand(options.Delete);
 
             throw new ArgumentException("参数无法转换");
         }
 
-        public static IControlCommand BuildCommand(string[] args)
-        {
-            return BuildCommand(OptionsParse(args));
-        }
 
         public static TimeSpan ParsePeriod(string s)
         {
@@ -119,6 +74,34 @@ namespace DirectDo.Application
             }
 
             return new TimeSpan(days, hours, minutes, seconds);
+        }
+
+        public static RootCommand BuildRootCommand(Func<AddOptions, Task> func)
+        {
+            var rootCommand = new RootCommand();
+
+            var addCommand = new Command("add", "添加一个闹钟") {TreatUnmatchedTokensAsErrors = true};
+            addCommand.AddAlias("+");
+            var messageArg = new Argument("message") {Description = "添加提醒信息"};
+
+            var atArg = new Argument("at") {Description = "提醒时间, 可以不填，默认为现在", Arity = ArgumentArity.ZeroOrOne};
+            
+            addCommand.AddArgument(messageArg);
+            addCommand.AddArgument(atArg);
+            addCommand.Handler = CommandHandler.Create(func);
+            addCommand.AddOption(new Option(new[] {"--sound", "-s"}, "启用提醒声音"));
+            addCommand.AddOption(new Option(new[] {"--after", "-p"}, "等待一段时间", typeof(string)));
+            addCommand.AddOption(new Option(new[] {"--times", "-t"}, "持续次数", typeof(int)));
+
+            var searchCommand = new Command("search", "搜索全部闹钟");
+
+            var deleteCommand = new Command("delete", "删除一个闹钟, 未完成");
+            deleteCommand.AddOption(new Option(new[] {"--reqid", "-i"}));
+
+            rootCommand.Add(addCommand);
+            rootCommand.Add(deleteCommand);
+            rootCommand.Add(searchCommand);
+            return rootCommand;
         }
     }
 }
