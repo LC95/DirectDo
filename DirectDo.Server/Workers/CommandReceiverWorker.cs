@@ -1,14 +1,3 @@
-/* 项目“DirectDo.Server (net5.0-windows10.0.19041.0)”的未合并的更改
-在此之前:
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using CommandLine;
-在此之后:
-using CommandLine;
-*/
-
 using DirectDo.Application;
 using DirectDo.Domain;
 using DirectDo.Domain.Commands;
@@ -71,6 +60,15 @@ namespace DirectDo.Server.Workers
                     // _router.SendMultipartMessage(BuildSendBackMessage(paramMsg[0].Buffer, e.ToString()));
                 }
             }
+        }
+
+        static NetMQMessage BuildSendBackMessage(NetMQMessage origin, string msg)
+        {
+            var messageToClient = new NetMQMessage();
+            messageToClient.Append(origin[0]);
+            messageToClient.AppendEmptyFrame();
+            messageToClient.Append(msg);
+            return messageToClient;
         }
 
 
