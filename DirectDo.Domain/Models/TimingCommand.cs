@@ -13,7 +13,7 @@ namespace DirectDo.Domain.Models
     /// 定时标记
     /// 两部分构成，一部分为定时命令的ID，一部分为定时的时刻
     /// </summary>
-    public readonly struct TimeIndexer : IComparable<TimeIndexer>
+    public readonly struct TimeIndexer : IComparable<TimeIndexer>, IEquatable<TimeIndexer>
     {
         public TimeIndexer(Guid id, DateTime alertTime)
         {
@@ -38,6 +38,21 @@ namespace DirectDo.Domain.Models
         public override string ToString()
         {
             return $"Id : {Id} & AlertTime : {AlertTime}";
+        }
+
+        public bool Equals(TimeIndexer other)
+        {
+            return Id.Equals(other.Id) && AlertTime.Equals(other.AlertTime);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is TimeIndexer other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, AlertTime);
         }
     }
 

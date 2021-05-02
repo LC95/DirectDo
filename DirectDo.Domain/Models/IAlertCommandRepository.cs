@@ -11,7 +11,7 @@ namespace DirectDo.Domain.Models
 
         public void UpdateCommand(TimingCommand command);
 
-        public TimingCommand Find(Guid id);
+        public TimingCommand? Find(Guid id);
 
         public IEnumerable<TimingCommand> All();
     }

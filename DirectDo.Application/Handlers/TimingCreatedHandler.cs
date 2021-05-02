@@ -22,7 +22,7 @@ namespace DirectDo.Application.Handlers
 
         public async Task Handle(TimingCreatedNotification notification, CancellationToken cancellationToken)
         {
-            await _clock.SetNewAlertTimeAsync(notification.AlertCommand.Indexer);
+            await _clock.AddAlertTimeAsync(notification.AlertCommand.Indexer);
             _alertCommandRepository.AddCommand(notification.AlertCommand);
             _messenger.SendMessage(notification.Id, "Your Commanded Has Been Handled");
         }

@@ -20,12 +20,15 @@ namespace DirectDo.Application.Handlers
             _messenger = messenger;
         }
 
-        public Task Handle(DeleteCommand notification, CancellationToken cancellationToken)
+        public async Task Handle(DeleteCommand notification, CancellationToken cancellationToken)
         {
-            _clock.Remove(notification.Id);
-            _repository.RemoveCommand(notification.Id);
-            _messenger.SendMessage(notification.Id, "The command deleted");
-            return Task.CompletedTask;
+            var cmd = _repository.Find(notification.Id);
+            if (cmd != null)
+            {
+                await _clock.RemoveAsync(new TimeIndexer(notification.Id, cmd.AlertTime));
+                _repository.RemoveCommand(notification.Id);
+                _messenger.SendMessage(notification.Id, "The command deleted");
+            }
         }
     }
 }

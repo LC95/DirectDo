@@ -8,7 +8,7 @@ namespace DirectDo.Domain
     {
         public Task BeginWaitAsync();
 
-        public ValueTask SetNewAlertTimeAsync(TimeIndexer indexer);
-        void Remove(Guid notificationId);
+        public ValueTask AddAlertTimeAsync(TimeIndexer indexer);
+        ValueTask RemoveAsync(TimeIndexer indexer);
     }
 }
