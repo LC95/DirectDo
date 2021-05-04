@@ -38,7 +38,14 @@ namespace DirectDo.Application
 
         public TimingCommand Find(Guid id)
         {
-            return _commands[id];
+            if (_commands.TryGetValue(id, out var value))
+            {
+                return value;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public IEnumerable<TimingCommand> All()

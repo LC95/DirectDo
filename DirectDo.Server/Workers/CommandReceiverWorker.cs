@@ -62,15 +62,6 @@ namespace DirectDo.Server.Workers
             }
         }
 
-        static NetMQMessage BuildSendBackMessage(NetMQMessage origin, string msg)
-        {
-            var messageToClient = new NetMQMessage();
-            messageToClient.Append(origin[0]);
-            messageToClient.AppendEmptyFrame();
-            messageToClient.Append(msg);
-            return messageToClient;
-        }
-
 
         private static IControlCommand BuildCommand(string param, string commandType)
         {

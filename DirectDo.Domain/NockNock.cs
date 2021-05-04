@@ -77,7 +77,7 @@ namespace DirectDo.Domain
                     _sortedIndexers.Add(indexerToOperate);
                     var min = _sortedIndexers.Min;
                     //在没有定时或者更近的定时来临时取消当前的等待
-                    if (indexerToOperate.CompareTo(min) < 0)
+                    if (indexerToOperate.CompareTo(min) <= 0)
                     {
                         _cancellationTokenSource.Cancel();
                         //等待BeginWaitAsync取消操作完成
@@ -96,11 +96,19 @@ namespace DirectDo.Domain
                         _hasCanceled.Wait();
                         _logger.LogInformation($"A Cancellation has finished for a remove {indexerToOperate}");
                     }
-
                 }
             }
         }
 
+        private async Task WaitWhenCommandNeedToExeAsync()
+        {
+            _cancellationTokenSource = new CancellationTokenSource();
+            var waitTime = GetWaitTimeSpan();
+            if (waitTime != TimeSpan.Zero)
+            {
+                await Task.Delay(waitTime, _cancellationTokenSource.Token);
+            }
+        }
 
         /// <summary>
         /// This loop method will executed in only one thread
@@ -111,31 +119,23 @@ namespace DirectDo.Domain
             {
                 try
                 {
-                    _cancellationTokenSource = new CancellationTokenSource();
-                    var waitTime = GetWaitTimeSpan();
-                    if (waitTime != TimeSpan.Zero)
-                    {
-                        await Task.Delay(waitTime, _cancellationTokenSource.Token);
-                    }
-
+                    await WaitWhenCommandNeedToExeAsync();
                     var recentTimeIndexer = _sortedIndexers.FirstOrDefault();
                     _sortedIndexers.Remove(recentTimeIndexer);
 
                     var cmd = _alertCommandRepository.Find(recentTimeIndexer.Id);
-                    if (cmd == null)
+                    if (cmd != null)
                     {
-                        continue;
-                    }
-                    //执行通知命令
-                    await _mediator.Publish(cmd);
-                    if (cmd.IsComplete)
-                    {
-                        _alertCommandRepository.RemoveCommand(cmd.Id);
-                    }
-                    else
-                    {
-                        _alertCommandRepository.UpdateCommand(cmd);
-                        await AddAlertTimeAsync(cmd.Indexer); //重新发布一个定时标记
+                        await _mediator.Publish(cmd);
+                        if (cmd.IsComplete)
+                        {
+                            _alertCommandRepository.RemoveCommand(cmd.Id);
+                        }
+                        else
+                        {
+                            _alertCommandRepository.UpdateCommand(cmd);
+                            await AddAlertTimeAsync(cmd.Indexer); //重新发布一个定时标记
+                        }
                     }
                 }
                 catch (OperationCanceledException)
