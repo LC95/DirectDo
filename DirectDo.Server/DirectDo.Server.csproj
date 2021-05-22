@@ -6,6 +6,11 @@
 		<UserSecretsId>dotnet-DirectDo.Service-27AF12DE-654D-40F6-BE3A-F0D4EA570BA8</UserSecretsId>
 		<ApplicationIcon>bitbug_favicon.ico</ApplicationIcon>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <_WebToolingArtifacts Remove="Properties\PublishProfiles\linux-x64.pubxml" />
+	  <_WebToolingArtifacts Remove="Properties\PublishProfiles\win-x64.pubxml" />
+	</ItemGroup>
 	<!--<PropertyGroup Condition=" '$(TargetFramework)' == 'net5.0-windows10.0.19041.0' ">
 		<OutputType>WinExe</OutputType>
 	</PropertyGroup>-->
