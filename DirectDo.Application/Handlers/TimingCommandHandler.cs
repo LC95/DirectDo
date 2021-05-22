@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DirectDo.Application.Handlers
 {
-    public class TimingCommandHandler : INotificationHandler<TimingAlertCommand>
+    public class TimingCommandHandler : INotificationHandler<TimingCommand>
     {
         private readonly INotifier _notifier;
         private readonly IAlertCommandRepository _alertCommandRepository;
@@ -20,7 +20,7 @@ namespace DirectDo.Application.Handlers
             _alertCommandRepository = alertCommandRepository;
         }
 
-        public async Task Handle(TimingAlertCommand alertCommand, CancellationToken cancellationToken)
+        public async Task Handle(TimingCommand alertCommand, CancellationToken cancellationToken)
         {
             await _notifier.NotifyAsync(alertCommand.Message, alertCommand.IsAlarm);
             _alertCommandRepository.RemoveCommand(alertCommand.Id);

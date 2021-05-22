@@ -1,14 +1,11 @@
 using DirectDo.Domain.Models;
 using System;
 using System.Collections.Generic;
-using System.CommandLine;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
+using DirectDo.Domain.Commands;
 using MediatR;
 using Timer = System.Timers.Timer;
-using Microsoft.VisualStudio.Threading;
 
 namespace DirectDo.Application
 {
@@ -22,7 +19,8 @@ namespace DirectDo.Application
         {
             _mediator = mediator;
             Command = command;
-            _timer = new Timer {Interval = command.RemainTime.Milliseconds, AutoReset = false};
+            var sec = command.RemainTime.TotalMilliseconds;
+            _timer = new Timer {Interval = sec, AutoReset = false};
             _timer.Elapsed +=   async ( _, _ ) => await RunAsync(Command);
             _timer.Start();
         }

@@ -1,5 +1,8 @@
 using DirectDo.Domain.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace DirectDo.Domain.Commands
 {
@@ -22,13 +25,44 @@ namespace DirectDo.Domain.Commands
         }
 
         public bool IsOver => _times == 0;
+
+        public int Value => _times;
     }
 
     /// <summary>
     ///     重复指令
     /// </summary>
-    public class TimingAlertCommand : TimingCommand
+    public class TimingCommand : IControlCommand
     {
+        public readonly bool IsAlarm;
+
+        public readonly string Message;
+
+        private readonly Queue<DateTime> _alertTimeQueue;
+
+        private DateTime AlertTime => _alertTimeQueue.Peek();
+
+        public TimeSpan RemainTime => GetRemainTime();
+
+        private TimeSpan GetRemainTime()
+        {
+            var t = AlertTime - DateTime.Now;
+            return t < TimeSpan.Zero ? TimeSpan.FromMilliseconds(100) : t;
+        }
+
+        public Guid Id { get; }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.Append($"Id:{Id}---");
+            sb.Append($"Message:{Message}---");
+            sb.AppendFormat("IsAlarm:{0}---", IsAlarm);
+            sb.Append($"IsComplete:{IsComplete}---");
+            sb.Append($"AlertTime:{AlertTime}---");
+            return sb.ToString();
+        }
+
         /// <summary>
         ///     间隔时间
         /// </summary>
@@ -48,21 +82,28 @@ namespace DirectDo.Domain.Commands
         /// <param name="period">间隔时间</param>
         /// <param name="isAlarm"></param>
         /// <param name="message"></param>
-        /// <param name="Guid"></param>
-        public TimingAlertCommand(Guid id, DateTime alertTime, Times remainTimes, TimeSpan period, bool isAlarm,
+        public TimingCommand(Guid id, DateTime alertTime, Times remainTimes, TimeSpan period, bool isAlarm,
             string message)
-            : base(id,alertTime, isAlarm, message)
         {
             _remainTimes = remainTimes;
             _period = period;
+            Id = id;
+            IsAlarm = isAlarm;
+            Message = message;
+            _alertTimeQueue = new Queue<DateTime>();
+            _alertTimeQueue.Enqueue(alertTime);
+            for (var i = 0; i < remainTimes.Value - 1; i++)
+            {
+                _alertTimeQueue.Enqueue(_alertTimeQueue.Last().Add(period));
+            }
         }
 
-        public override bool IsComplete => _remainTimes.IsOver;
+        public bool IsComplete => _remainTimes.IsOver;
 
-        public override void AfterRun()
+        public void AfterRun()
         {
             _remainTimes.Reduce();
-            AlertTime = AlertTime.Add(_period);
+            _alertTimeQueue.Dequeue();
         }
     }
 }

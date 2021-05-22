@@ -1,4 +1,5 @@
 using System;
+using DirectDo.Domain.Commands;
 using DirectDo.Domain.Models;
 
 namespace DirectDo.Domain.Events

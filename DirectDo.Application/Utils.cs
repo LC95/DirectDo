@@ -32,7 +32,7 @@ namespace DirectDo.Application
                 }
 
                 after ??= TimeSpan.Zero;
-                var cmd = new TimingAlertCommand(id, at.Value, new Times(maintainTimes), after.Value, alarm,
+                var cmd = new TimingCommand(id, at.Value, new Times(maintainTimes), after.Value, alarm,
                     addOptions.Message);
                 return new TimingCreatedNotification(cmd);
             }
@@ -89,7 +89,7 @@ namespace DirectDo.Application
         {
             var addCommand = new Command("add", "添加一个闹钟") {TreatUnmatchedTokensAsErrors = true};
             addCommand.AddAlias("+");
-            
+
             var messageArg = new Argument("message") {Description = "添加提醒信息"};
             var atArg = new Argument("at") {Description = "提醒时间, 可以不填，默认为现在", Arity = ArgumentArity.ZeroOrOne};
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DirectDo.Domain.Commands;
 
 namespace DirectDo.Domain.Models
 {
