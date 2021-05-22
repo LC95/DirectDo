@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 
 namespace DirectDo.Application
 {
-    public interface INotify
+    public interface INotifier
     {
         public Task NotifyAsync(string content, bool sound);
     }

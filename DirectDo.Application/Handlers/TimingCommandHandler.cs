@@ -3,25 +3,33 @@ using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using DirectDo.Domain.Models;
 using Microsoft.Extensions.Logging;
 
 namespace DirectDo.Application.Handlers
 {
     public class TimingCommandHandler : INotificationHandler<TimingAlertCommand>
     {
-        private readonly INotify _notify;
+        private readonly INotifier _notifier;
+        private readonly IAlertCommandRepository _alertCommandRepository;
         private readonly ILogger<TimingCommandHandler> _logger;
-        public TimingCommandHandler(INotify notify, ILogger<TimingCommandHandler> logger)
+        public TimingCommandHandler(INotifier notifier, ILogger<TimingCommandHandler> logger, IAlertCommandRepository alertCommandRepository)
         {
-            _notify = notify;
+            _notifier = notifier;
             _logger = logger;
+            _alertCommandRepository = alertCommandRepository;
         }
 
         public async Task Handle(TimingAlertCommand alertCommand, CancellationToken cancellationToken)
         {
-            await _notify.NotifyAsync(alertCommand.Message, alertCommand.IsAlarm);
+            await _notifier.NotifyAsync(alertCommand.Message, alertCommand.IsAlarm);
+            _alertCommandRepository.RemoveCommand(alertCommand.Id);
             alertCommand.AfterRun();
-           _logger.LogInformation($"ID:{alertCommand.Id} is handled and its complete status is {alertCommand.IsComplete}");
+            if (!alertCommand.IsComplete)
+            {
+                _alertCommandRepository.AddCommand(alertCommand);
+            }
+            _logger.LogInformation($"ID:{alertCommand.Id} is handled and its complete status is {alertCommand.IsComplete}");
         }
     }
 }

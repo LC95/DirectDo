@@ -64,6 +64,14 @@ namespace DirectDo.Domain.Models
 
         public DateTime AlertTime;
 
+        public TimeSpan RemainTime => GetRemainTime();
+
+        private TimeSpan GetRemainTime()
+        {
+            var t = AlertTime - DateTime.Now;
+            return t < TimeSpan.Zero ? TimeSpan.FromMilliseconds(100) : t;
+        }
+        
         protected TimingCommand(Guid id, DateTime alertTime, bool isAlarm, string message)
         {
             Id = id;

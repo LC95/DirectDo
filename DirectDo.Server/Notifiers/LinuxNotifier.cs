@@ -5,7 +5,7 @@ using DirectDo.Application;
 
 namespace DirectDo.Server.Notifiers
 {
-    public class LinuxNotifier : INotify
+    public class LinuxNotifier : INotifier
     {
         private readonly string _audioPath =
             Path.Combine(Directory.GetCurrentDirectory()) + "/Audios/bell.wav";

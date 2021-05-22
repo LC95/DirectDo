@@ -6,7 +6,7 @@ using Microsoft.Toolkit.Uwp.Notifications;
 
 namespace DirectDo.Server.Notifiers
 {
-    public class WindowsNotifier : INotify
+    public class WindowsNotifier : INotifier
     {
         private readonly Uri _p = new(Path.GetFullPath("Images/bell.png"));
         private readonly Uri _h = new(Path.GetFullPath("Images/hero_image.jpeg"));

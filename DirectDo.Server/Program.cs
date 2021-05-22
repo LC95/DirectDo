@@ -47,23 +47,21 @@ namespace DirectDo.Server
                 .ConfigureServices((hostContext, services) =>
                 {
                     services
-                        .AddHostedService<AlertWorker>()
                         .AddHostedService<CommandReceiverWorker>()
                         .AddMediatR(
                             Assembly.GetAssembly(typeof(AlertCommandRepository)),
-                            Assembly.GetAssembly(typeof(INotify)))
+                            Assembly.GetAssembly(typeof(INotifier)))
                         .AddSingleton<IAlertCommandRepository, AlertCommandRepository>()
-                        .AddSingleton<IClock, NockNock>()
                         .AddSingleton<IServerMessenger, ServerMessenger>()
                         .AddSingleton<NetMQRuntime>()
                         .AddSingleton<RouterSocket>(new RouterSocket("@tcp://127.0.0.1:5556"));
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                     {
-                        services.AddSingleton<INotify, LinuxNotifier>();
+                        services.AddSingleton<INotifier, LinuxNotifier>();
                     }
                     else
                     {
-                        services.AddSingleton<INotify, WindowsNotifier>();
+                        services.AddSingleton<INotifier, WindowsNotifier>();
                     }
 
                     services.BuildServiceProvider();
