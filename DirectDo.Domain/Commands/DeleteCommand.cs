@@ -1,14 +1,16 @@
+using System;
 using DirectDo.Domain.Models;
 
 namespace DirectDo.Domain.Commands
 {
     public class DeleteCommand : IControlCommand
     {
-        public DeleteCommand(string id)
+        public DeleteCommand(Guid id)
         {
             Id = id;
         }
 
-        public string Id { get; }
+
+        public Guid Id { get; }
     }
 }

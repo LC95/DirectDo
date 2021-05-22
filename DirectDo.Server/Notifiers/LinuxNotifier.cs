@@ -1,13 +1,35 @@
-using DirectDo.Application;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
+using DirectDo.Application;
 
-namespace DirectDo.Server
+namespace DirectDo.Server.Notifiers
 {
-    public class LinuxNotifier : INotify
+    public class LinuxNotifier : INotifier
     {
-        public async Task NotifyAsync(string content)
+        private readonly string _audioPath =
+            Path.Combine(Directory.GetCurrentDirectory()) + "/Audios/bell.wav";
+
+        public async Task NotifyAsync(string content, bool sound)
         {
+            if (sound)
+            {
+                var audioProcess = new Process()
+                {
+                    StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = $"paplay",
+                        Arguments = _audioPath,
+                        RedirectStandardOutput = false,
+                        RedirectStandardError = false,
+                        UseShellExecute = true,
+                        CreateNoWindow = true,
+                    }
+                };
+                audioProcess.Start();
+                await audioProcess.WaitForExitAsync();
+            }
+
             var process = new Process()
             {
                 StartInfo = new ProcessStartInfo()
@@ -20,6 +42,7 @@ namespace DirectDo.Server
                     CreateNoWindow = true,
                 }
             };
+
             process.Start();
             await process.WaitForExitAsync();
         }

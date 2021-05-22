@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
+<!--        <OutputType>WinExe</OutputType>-->
 		<TargetFrameworks>net5.0;net5.0-windows10.0.19041.0</TargetFrameworks>
 		<UserSecretsId>dotnet-DirectDo.Service-27AF12DE-654D-40F6-BE3A-F0D4EA570BA8</UserSecretsId>
 		<ApplicationIcon>bitbug_favicon.ico</ApplicationIcon>
@@ -20,11 +21,12 @@
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
         <PackageReference Include="NetMQ" Version="4.0.1.6" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.0.1" />
 
     </ItemGroup>
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net5.0-windows10.0.19041.0' ">
-		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.0.1" />
-	</ItemGroup>
+	<!-- <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0-windows10.0.19041.0' "> -->
+		<!-- <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.0.1" /> -->
+	<!-- </ItemGroup> -->
     <ItemGroup>
       <ProjectReference Include="..\DirectDo.Application\DirectDo.Application.csproj" />
       <ProjectReference Include="..\DirectDo.Domain\DirectDo.Domain.csproj" />
@@ -36,5 +38,10 @@
       <None Update="Images\hero_image.jpeg">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="Audios\bell.wav">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 </Project>
