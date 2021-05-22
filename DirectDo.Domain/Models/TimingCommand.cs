@@ -46,7 +46,7 @@ namespace DirectDo.Domain.Models
             return Id.Equals(other.Id) && AlertTime.Equals(other.AlertTime);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is TimeIndexer other && Equals(other);
         }

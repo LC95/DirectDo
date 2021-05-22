@@ -21,7 +21,7 @@ namespace DirectDo.Application
             Command = command;
             var sec = command.RemainTime.TotalMilliseconds;
             _timer = new Timer {Interval = sec, AutoReset = false};
-            _timer.Elapsed +=   async ( _, _ ) => await RunAsync(Command);
+            _timer.Elapsed += async (_, _) => await RunAsync(Command).ConfigureAwait(false);
             _timer.Start();
         }
 
